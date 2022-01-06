@@ -1,0 +1,131 @@
+ngôn ngữ : cpp
+
+ma trận :
+  bao gồm :
+    - os : linux
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 1
+        - SDL_MAJOR_VERSION = 1
+        - ADDRESSING_MODE = trực tiếp
+    - os : linux
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 1
+        - SDL_MAJOR_VERSION = 1
+        - ADDRESSING_MODE = ngân hàng
+    - os : windows
+      dist : bonic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+       - WITH_SDL = 1
+        - SDL_MAJOR_VERSION = 1
+        - ADDRESSING_MODE = ngân hàng
+    - os : linux
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 1
+        - SDL_MAJOR_VERSION = 2
+        - ADDRESSING_MODE = trực tiếp
+    - os : linux
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 1
+        - SDL_MAJOR_VERSION = 2
+        - ADDRESSING_MODE = ngân hàng
+    - os : linux
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 0
+        - ADDRESSING_MODE = trực tiếp
+    - os : linux
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 0
+        - ADDRESSING_MODE = ngân hàng
+    - os : OSX
+      trình biên dịch : clang
+      osx_image : xcode12
+      vi :
+        - WITH_SDL = 0
+    - os : OSX
+      trình biên dịch : clang
+      osx_image : xcode12
+      vi :
+        - WITH_SDL = 1
+    - os : linux
+      vòm : arm64
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 1
+        - SDL_MAJOR_VERSION = 1
+        - CPU_ARCH = arm64
+    - os : linux
+      vòm : arm64
+      dist : bionic
+      sudo : bắt buộc
+      trình biên dịch : gcc
+      vi :
+        - WITH_SDL = 1
+        - SDL_MAJOR_VERSION = 2
+        - CPU_ARCH = arm64
+
+
+addons :
+  apt :
+    gói :
+      - libsdl1.2-dev
+      - libgtk2.0-dev
+      - libsdl2-dev
+  homebrew :
+    gói :
+      - sdl2
+      - autoconf
+      - làm
+
+script :
+  - ERR_CODE = 0
+  - cd BasiliskII / src / Unix
+  - NO_CONFIGURE = 1 ./autogen.sh
+  - if [["$ TRAVIS_OS_NAME" == "linux"]]; sau đó
+        if [[$ WITH_SDL == * "1" *]]; sau đó
+          if [[$ SDL_MAJOR_VERSION == * "1" *]]; sau đó
+            if [[$ CPU_ARCH == * "arm64" *]]; sau đó
+              ./configure --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --with-x --with-gtk --with-mon;
+            khác
+              ./configure --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --with-x --with-gtk --with-mon --enable-addressing = $ ADDRESSING_MODE;
+            fi
+          khác
+            if [[$ CPU_ARCH == * "arm64" *]]; sau đó
+              ./configure --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --with-x --with-gtk --with-mon --with-sdl2;
+            khác
+              ./configure --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --with-x --with-gtk --with-mon --with-sdl2 - -enable-addressing = $ ADDRESSING_MODE;
+            fi
+          fi
+        khác
+              ./configure --disable-jit-compiler --with-x --with-gtk --with-mon --enable-addressing = $ ADDRESSING_MODE;
+        fi
+    khác
+        if [[$ WITH_SDL == * "1" *]]; sau đó
+          ./configure --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --with-gtk = no --with-mon --with-sdl2 --enable- địa chỉ = ngân hàng;
+        khác
+          ./configure --disable-vosf --disable-jit-compiler --with-gtk = no --with-mon --enable-addressing = bank;
+        fi
+    fi
+  - make -j 4 || ERR_CODE = $ ?;
+  - (thoát $ ERR_CODE)
